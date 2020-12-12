@@ -603,7 +603,7 @@ app.get('/video',isLoggedIn,(req,res)=>{
 					  	//client.close();	
 	
 })
-
+//route to handle events
 app.get('/events',isLoggedIn,(req,res) =>{
 	let myreminders=[];
 	var msg = "";
