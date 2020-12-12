@@ -42,7 +42,7 @@ function isLoggedIn(req,res,next){
 		res.redirect('/login');
 	}
 }
-
+//random generate
 function getRandom(arr, n) {
     var result = new Array(n),
         len = arr.length,
