@@ -10,18 +10,18 @@ var	User = require('./models/user'),
 	Event = require('./models/events'),
  	fs   = require('fs'),
 	path = require('path');
-var multer = require('multer'); 
+var multer = require('multer');
 const uri ="mongodb+srv://vishaka:Vishaka@cluster0.u0mor.mongodb.net/alzheimers?retryWrites=true&w=majority"
 //const uri = process.env.DATABASEURL;
-var storage = multer.diskStorage({ 
-    destination: (req, file, cb) => { 
-        cb(null, 'uploads') 
-    }, 
-    filename: (req, file, cb) => { 
-        cb(null, file.fieldname + '-' + Date.now()) 
-    } 
-}); 
-var upload = multer({ storage: storage }); 
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+});
+var upload = multer({ storage: storage });
 const NewsAPI = require('newsapi');
 const { type } = require('os');
 const { ESRCH } = require('constants');
@@ -61,7 +61,7 @@ function getRandom(arr, n) {
 
 let all_questions;
 const GetRandQuestion =(personobj,allnames)=>{
-	
+
 	let randpicind = Math.floor(Math.random() * personobj.photos.length);
 	let randphoto = personobj.photos[randpicind];
 	let answer = personobj.relName;
@@ -105,17 +105,17 @@ app.use(function(req,res,next){
 	res.locals.error = req.flash("error");
 	res.locals.success = req.flash("success");
 	next();
-})	
+})
 
 function checkReminders(data){
-	var d = new Date(); 
+	var d = new Date();
 	var currDay = d.getDay();
 	console.log(d);
 	console.log(d.getDay());
 	var timeStart = new Date().getHours();
 	var minStart = new Date().getMinutes();
 	var resReminders = [];
-	
+
 
 	for(let i=0; i<data.length; i++){
 		for(let j=0; j<data[i].days.length; j++){
@@ -135,7 +135,7 @@ function checkReminders(data){
 						resReminders.push(data[i]);
 
 					}
-					
+
 
 				}
 
@@ -145,15 +145,15 @@ function checkReminders(data){
 	console.log(resReminders);
 
 	return resReminders;
-	
+
 }
 
-
+// Updating
 
 app.get('/',function(req,res){
 
-	
-	
+
+
 	res.render("landing.ejs");
 })
 
@@ -165,7 +165,7 @@ app.get('/home',isLoggedIn,function(req,res){
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 	client.connect(err => {
 					  collection = client.db("alzheimers").collection("events");
-					  
+
 					  console.log("success getting");
 					  collection.find({patUserName: req.user.username }).toArray(function(err,data){
 							if(err) throw err;
@@ -177,12 +177,12 @@ app.get('/home',isLoggedIn,function(req,res){
 							res.render('homepage.ejs', {myreminders: myreminders, msg: msg});
 
 						});
-						//client.close();	
+						//client.close();
 						console.log("REMINDERS LATER",myreminders);
 						client.close();
 			        });
-					  	//client.close();	
-	
+					  	//client.close();
+
 			//res.render("homepage.ejs",{myreminders:myreminders,msg:msg});
 })
 
@@ -195,15 +195,15 @@ app.post('/register',upload.single('DP'),function(req,res,next){
 		name: req.body.name,
 		username: req.body.username,
 		email: req.body.email,
-		DP: { 
-	            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)), 
+		DP: {
+	            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
 	            contentType: 'image/png'
-        	} 
+        	}
 
 	});
 	User.register(newUser,req.body.password,function(err,user){
 		if(err){
-			
+
 			req.flash("error","A user with the same username already exits! Choose another Username.")
 			console.log(err);
 			res.redirect('/register');
@@ -229,7 +229,7 @@ app.post('/login',passport.authenticate("local",{
 	failureRedirect:"/login"
 
 }),function(req,res){
-	
+
 })
 
 app.get('/logout',function(req,res){
@@ -277,15 +277,15 @@ app.get('/entertainment',isLoggedIn,(req,res)=>{
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 	client.connect(err => {
 					  collection = client.db("alzheimers").collection("users");
-					  
+
 					  console.log("success getting");
 					  collection.find({_id: ObjectId(req.user._id) }).toArray(function(err,data){
 							if(err) throw err;
 							console.log(data);
 
-							
+
 							if(data[0].hasOwnProperty('videos')){
-								
+
 								for(var i=0; i<data[0].videos.length-1; i++)
 								{
 									vidids += data[0].videos[i] ;
@@ -296,19 +296,19 @@ app.get('/entertainment',isLoggedIn,(req,res)=>{
 								console.log(req.user.name);
 								console.log(vidids);
 							}
-							
-							
+
+
 							//res.render('entertainment.ejs', {result: vidids});
 
 						});
-			
+
 			        });
-					  	client.close();	
+					  	client.close();
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 
 	client.connect(err => {
 					  collection = client.db("alzheimers").collection("events");
-					  
+
 					  console.log("success getting");
 					  collection.find({patUserName: req.user.username }).toArray(function(err,data){
 							if(err) throw err;
@@ -320,9 +320,9 @@ app.get('/entertainment',isLoggedIn,(req,res)=>{
 							res.render('entertainment.ejs', {result: vidids, msg: msg, myreminders:myreminders});
 
 						});
-						//client.close();	
+						//client.close();
 			        });
-					  	client.close();	
+					  	client.close();
 })
 
 app.get('/addvideos',isLoggedIn,(req,res)=>{
@@ -340,8 +340,8 @@ app.post('/addvideos',isLoggedIn,(req,res)=>{
 	client.connect(err => {
 
 		    collection = client.db("alzheimers").collection("users");
-			
-			
+
+
 			collection.updateOne({_id: ObjectId(req.user._id)}, {$addToSet: {videos: req.body.videoid}},
 					function(err, res) {
 
@@ -362,7 +362,7 @@ app.get('/games',isLoggedIn,(req,res)=>{
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 	client.connect(err => {
 		collection = client.db("alzheimers").collection("events");
-		
+
 		console.log("success getting");
 		collection.find({patUserName: req.user.username }).toArray(function(err,data){
 			  if(err) throw err;
@@ -376,8 +376,8 @@ app.get('/games',isLoggedIn,(req,res)=>{
 		  });
 		  	client.close();
 	  });
-			//client.close();	
-	
+			//client.close();
+
 })
 
 app.get('/memorygame',isLoggedIn,(req,res)=>{
@@ -395,7 +395,7 @@ app.get('/circle',isLoggedIn,(req,res)=>{
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 	client.connect(err => {
 					  collection = client.db("alzheimers").collection("events");
-					  
+
 					  console.log("success getting");
 					  collection.find({patUserName: req.user.username }).toArray(function(err,data){
 							if(err) throw err;
@@ -407,70 +407,70 @@ app.get('/circle',isLoggedIn,(req,res)=>{
 							//res.render('events.ejs', {result: result, msg: msg});
 
 						});
-						//client.close();	
+						//client.close();
 			        });
-					  	client.close();	
+					  	client.close();
 
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 	client.connect(err => {
 					  collection = client.db("alzheimers").collection("relatives");
-					  
+
 					  console.log("success getting");
 					  collection.find({patUserName: req.user.username }).toArray(function(err,data){
 							if(err) throw err;
 							console.log(data);
-							
+
 							res.render('myCircle.ejs', {result: data,myreminders:myreminders,msg:msg});
 
 						});
-						//client.close();	
+						//client.close();
 			        });
-					  	client.close();	
-	
+					  	client.close();
+
 })
 
 
 
-var storageCircle = multer.diskStorage({ 
+var storageCircle = multer.diskStorage({
     destination: (req, file, cb) => {
     if (!fs.existsSync('uploads/'+ req.user.username )){
     		fs.mkdirSync('uploads/'+ req.user.username);
-	} 
+	}
     	if (!fs.existsSync('uploads/'+ req.user.username + '/' + req.body.relName)){
     		fs.mkdirSync('uploads/'+ req.user.username + '/' + req.body.relName);
 	}
         cb(null, 'uploads/'+ req.user.username + '/' + req.body.relName) ;
-    }, 
-    filename: (req, file, cb) => { 
-        cb(null, file.fieldname + '-' + Date.now()) 
-    } 
-}); 
-var uploadCircle = multer({ storage: storageCircle }); 
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+});
+var uploadCircle = multer({ storage: storageCircle });
 
 app.get('/circleupload',isLoggedIn,(req,res) =>{
 
-	
+
 	res.render('myCircleUpload.ejs');
 
 })
 
 app.post('/circleupload',uploadCircle.array('files'),function(req,res,next){
-	
+
 	var photos = [];
 	for(var i=0; i<req.files.length; i++)
 	{
-		photos.push({ 
-	            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.user.username + '/'+ req.body.relName + '/' + req.files[i].filename)), 
+		photos.push({
+	            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.user.username + '/'+ req.body.relName + '/' + req.files[i].filename)),
 				contentType: 'image/png',
 				path: req.files[i].path
         	});
 	}
-	
+
 	var newRelative = new Relative({
 		patUserName: req.user.username,
 		relName: req.body.relName,
 		relation: req.body.relation,
-		
+
 		photos: photos
 
 	});
@@ -480,7 +480,7 @@ app.post('/circleupload',uploadCircle.array('files'),function(req,res,next){
 	client.connect(err => {
 
 			  collection = client.db("alzheimers").collection("relatives");
-			  
+
 			  console.log("success");
 
 			  	collection.insertOne(newRelative, (err, result) => {
@@ -489,29 +489,29 @@ app.post('/circleupload',uploadCircle.array('files'),function(req,res,next){
 				            console.log(err);
 				        }else{
 
-							
+
 							console.log("done");
 						}
-				
+
 	        });
 			  	client.close();
 		});
 	req.flash("success","relative added succesfully");
 	res.redirect('/circleupload');
 	//res.render('myCircleUpload.ejs');
-	
-	
+
+
 })
 
 
 
 app.get('/guesswho',isLoggedIn,(req,res)=>{
-	
+
 
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 	client.connect(err => {
 					  collection = client.db("alzheimers").collection("relatives");
-					  
+
 					  console.log("success getting");
 					  collection.find({patUserName: req.user.username }).toArray(function(err,data){
 							if(err) throw err;
@@ -527,16 +527,16 @@ app.get('/guesswho',isLoggedIn,(req,res)=>{
 								let question = GetRandQuestion(obj,allnames);
 								all_questions.push(question);
 							}
-							
-							
+
+
 							console.log("THE QUESTION SET IS",all_questions);
 							res.render('guesswho', {all_questions:all_questions});
 
 						});
-						client.close();	
+						client.close();
 			        });
-					  	//client.close();	
-	
+					  	//client.close();
+
 })
 
 app.post('/guesswho/checkanswer',isLoggedIn,(req,res)=>{
@@ -548,7 +548,7 @@ app.post('/guesswho/checkanswer',isLoggedIn,(req,res)=>{
 	let correctansarr = all_questions.map(obj=>obj.answer);
 	let indices = all_questions.length;
 	for(var i=1;i<=indices;i++){
-		
+
 		let key = "Choice"+(i);
 		let value = req.body[key];
 		myanswer[i-1]=value;
@@ -569,17 +569,17 @@ app.post('/guesswho/checkanswer',isLoggedIn,(req,res)=>{
 
 app.get('/video',isLoggedIn,(req,res)=>{
 
-	
+
 	 let labels = [];
 	 let path = [];
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 	client.connect(err => {
 					  collection = client.db("alzheimers").collection("relatives");
-					  
+
 					  console.log("success getting");
 					  collection.find({patUserName: req.user.username }).toArray(function(err,data){
 							if(err) throw err;
-							
+
 							for(let i=0; i<data.length; i++){
 								labels.push(data[i].relName);
 							}
@@ -594,14 +594,14 @@ app.get('/video',isLoggedIn,(req,res)=>{
 							}
 
 							console.log(path);
-							
+
 							res.render('videoRec.ejs', {labels: labels, path: path});
 
 						});
-						client.close();	
+						client.close();
 			        });
-					  	//client.close();	
-	
+					  	//client.close();
+
 })
 //route to handle events
 app.get('/events',isLoggedIn,(req,res) =>{
@@ -610,7 +610,7 @@ app.get('/events',isLoggedIn,(req,res) =>{
 	var client = new MongoClient(uri, { useNewUrlParser: true});
 	client.connect(err => {
 					  collection = client.db("alzheimers").collection("events");
-					  
+
 					  console.log("success getting");
 					  collection.find({patUserName: req.user.username }).toArray(function(err,data){
 							if(err) throw err;
@@ -622,16 +622,16 @@ app.get('/events',isLoggedIn,(req,res) =>{
 							res.render('events.ejs', {result: result, msg: msg});
 
 						});
-						client.close();	
+						client.close();
 			        });
-					  	//client.close();	
+					  	//client.close();
 
 })
 
 app.get('/eventsadd',isLoggedIn,(req,res) => {
 	res.render('eventsAdd.ejs');
 	//console.log(req.query);
-	
+
 
 })
 
@@ -668,7 +668,7 @@ app.post('/eventsadd',isLoggedIn,(req,res) =>{
 	client.connect(err => {
 
 			  collection = client.db("alzheimers").collection("events");
-			  
+
 			  console.log("success");
 
 			  	collection.insertOne(newEvent, (err, result) => {
@@ -676,11 +676,11 @@ app.post('/eventsadd',isLoggedIn,(req,res) =>{
 				            req.flash("error","Could not add event");
 				            console.log(err);
 				        }else{
-							
-							
+
+
 							console.log("done");
 						}
-				
+
 	        });
 			  	client.close();
 		});
