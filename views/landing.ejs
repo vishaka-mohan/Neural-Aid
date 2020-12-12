@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/stylesheets/app.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <title>Landing</title>
+
+</head>
+
+<body>
+
+    
+    
+
+    <div class="container">
+
+        <%if(error && error.length>0){%>
+            <div class="alert alert-danger" role="alert">
+                  <%=error%>
+            </div>
+        <%}%>
+        <%if(success && success.length>0){%>
+            <div class="alert alert-success" role="alert">
+                  <%=success%>
+            </div>
+        <%}%>
+        
+        <img src="img/Brain.svg" alt="" class="brain">
+        <h1>Hello!</h1>
+
+    <a href="/register" class="purp-btn">Register</a>
+
+    <a href="/login" class="purp-btn margin-bottom">Login</a>
+    </div>
+    
+
+
+</body>
+
+</html>
